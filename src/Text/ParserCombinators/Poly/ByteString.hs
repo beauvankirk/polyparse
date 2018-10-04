@@ -24,6 +24,7 @@ import qualified Data.ByteString.Lazy as BS
 import Data.ByteString.Lazy (ByteString)
 import Control.Applicative
 import Data.Word
+import qualified Control.Monad.Fail as Fail
 
 -- | This @Parser@ datatype is a specialised parsing monad with error
 --   reporting.  Whereas the standard version can be used for arbitrary
@@ -46,6 +47,9 @@ instance Monad Parser where
         continue (Committed r)              = Committed (continue r)
         continue (Failure ts e)             = Failure ts e
 
+instance Fail.MonadFail Parser where
+    fail e       = P (\ts-> Failure ts e)
+    
 instance Commitment Parser where
     commit (P p)         = P (Committed . squash . p)
       where
