@@ -48,7 +48,7 @@ instance Monad (Parser t) where
     fail e    = P (fail e)
     (P f) >>= g = P (f >>= (\(P g')->g') . g)
 instance Fail.MonadFail (Parser t) where
-    fail e       = P (\ts-> Failure ts e)
+    fail e    = P (fail e)
 instance Commitment (Parser t) where
     commit (P p)   = P (commit p)
     (P p) `adjustErr` f  = P (p `adjustErr` f)
