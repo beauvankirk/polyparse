@@ -23,6 +23,7 @@ module Text.ParserCombinators.Poly.StateParser
 import Text.ParserCombinators.Poly.Base
 import Text.ParserCombinators.Poly.Result
 import Control.Applicative
+import qualified Control.Monad.Fail as Fail
 
 -- | This @Parser@ datatype is a fairly generic parsing monad with error
 --   reporting, and running state.
@@ -48,6 +49,9 @@ instance Monad (Parser s t) where
         continue (Success (ts,s) x)        = let (P g') = g x in g' s ts
         continue (Committed r)             = Committed (continue r)
         continue (Failure tss e)           = Failure tss e
+
+instance Fail.MonadFail (Parser s t) where
+    fail e       = P (\ts-> Failure ts e)
 
 instance Alternative (Parser s t) where
     empty     = fail "no parse"
