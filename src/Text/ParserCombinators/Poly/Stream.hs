@@ -54,7 +54,7 @@ instance Monad (Parser t) where
                                 (Right x,  ts') -> let (P g') = g x in g' ts')
     fail e       = P (\ts-> (Left (False,e), ts))
 instance Fail.MonadFail (Parser t) where
-    fail e       = P (\ts-> Failure ts e)
+    fail e       = P (\ts-> (Left (False,e), ts))
     
 instance PolyParse (Parser t) where
     commit (P p)         = P (\ts-> case p ts of
