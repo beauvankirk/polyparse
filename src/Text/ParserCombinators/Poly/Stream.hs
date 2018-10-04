@@ -14,6 +14,7 @@ module Text.ParserCombinators.Poly.Stream
 
 
 import Text.ParserCombinators.Poly.Base
+import qualified Control.Monad.Fail as Fail
 -------------------------------------------------
 -- import Data.Stream
 
@@ -52,7 +53,9 @@ instance Monad (Parser t) where
                                 (Left msg, ts') -> (Left msg, ts')
                                 (Right x,  ts') -> let (P g') = g x in g' ts')
     fail e       = P (\ts-> (Left (False,e), ts))
-
+instance Fail.MonadFail (Parser t) where
+    fail e       = P (\ts-> Failure ts e)
+    
 instance PolyParse (Parser t) where
     commit (P p)         = P (\ts-> case p ts of
                                       (Left (_,e), ts') -> (Left (True,e), ts')
