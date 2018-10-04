@@ -51,7 +51,7 @@ instance Monad (Parser s t) where
         continue (Failure tss e)           = Failure tss e
 
 instance Fail.MonadFail (Parser s t) where
-    fail e       = P (\ts-> Failure ts e)
+    fail e       = P (\s ts-> Failure (ts,s) e)
 
 instance Alternative (Parser s t) where
     empty     = fail "no parse"
