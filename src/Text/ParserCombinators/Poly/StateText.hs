@@ -28,6 +28,7 @@ import Text.ParserCombinators.Poly.Result
 import qualified Data.Text.Lazy as T
 import Data.Text.Lazy (Text)
 import Control.Applicative
+import qualified Control.Monad.Fail as Fail
 
 -- | This @Parser@ datatype is a specialised parsing monad with error
 --   reporting.  Whereas the standard version can be used for arbitrary
@@ -52,6 +53,9 @@ instance Monad (Parser s) where
         continue (Committed r)              = Committed (continue r)
         continue (Failure ts e)             = Failure ts e
 
+instance Fail.MonadFail (Parser s) where
+    fail e       = P (\ts-> Failure ts e)
+    
 instance Commitment (Parser s) where
     commit (P p)         = P (\s-> Committed . squash . p s)
       where
