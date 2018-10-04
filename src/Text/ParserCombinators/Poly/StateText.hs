@@ -54,7 +54,7 @@ instance Monad (Parser s) where
         continue (Failure ts e)             = Failure ts e
 
 instance Fail.MonadFail (Parser s) where
-    fail e       = P (\ts-> Failure ts e)
+    fail e       = P (\s ts-> Failure (ts,s) e)
     
 instance Commitment (Parser s) where
     commit (P p)         = P (\s-> Committed . squash . p s)
