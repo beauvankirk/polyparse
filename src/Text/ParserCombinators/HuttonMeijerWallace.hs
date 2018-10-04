@@ -56,7 +56,7 @@ module Text.ParserCombinators.HuttonMeijerWallace
 import Data.Char
 import Control.Applicative ( Applicative(pure,(<*>)), Alternative(empty,(<|>)) )
 import Control.Monad
-
+import qualified Control.Monad.Fail as Fail
 infixr 5 +++
 
 --- The parser monad ---------------------------------------------------------
@@ -91,7 +91,9 @@ instance Monad (Parser s t e) where
    -- fail        :: String -> Parser s t e a
    fail err        = P (\st inp -> Right [])
   -- I know it's counterintuitive, but we want no-parse, not an error.
-
+instance Fail.MonadFail (Parser s t e) where
+   fail err        = P (\st inp -> Right [])
+    
 instance Alternative (Parser s t e) where
    empty = mzero
    (<|>) = mplus
