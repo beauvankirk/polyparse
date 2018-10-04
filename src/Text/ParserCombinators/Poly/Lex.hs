@@ -30,6 +30,7 @@ module Text.ParserCombinators.Poly.Lex
 import Text.ParserCombinators.Poly.Base
 import Text.ParserCombinators.Poly.Result
 import Control.Applicative
+import qualified Control.Monad.Fail as Fail
 
 -- | In a strict language, where creating the entire input list of tokens
 --   in one shot may be infeasible, we can use a lazy "callback" kind of
@@ -62,6 +63,9 @@ instance Monad (Parser t) where
         continue (Committed r)              = Committed (continue r)
         continue (Failure ts e)             = Failure ts e
 
+instance Fail.MonadFail (Parser t) where
+    fail e       = P (\ts-> Failure ts e)
+    
 instance Commitment (Parser t) where
     commit (P p)         = P (Committed . squash . p)
       where
